@@ -1,6 +1,10 @@
 {
   "name": "POP",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "homepage": "https://github.com/timothythehuman/pop",
+  "author": {
+    "name": "Timothy Baron"
+  }
   "engines": {
     "node": ">= 0.10.0"
   },
