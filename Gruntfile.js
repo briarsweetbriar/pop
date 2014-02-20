@@ -11,46 +11,46 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
-    concat: {
-      options: {
-        banner: '<%= banner %>',
-        stripBanners: true
-      },
-      dist: {
-        src: ['lib/<%= pkg.name %>.js'],
-        dest: 'dist/<%= pkg.name %>.js'
+    coffeelint: {
+      app: ['app/*.coffee'],
+      tests: {
+        files: {
+          src: ['test/**/*.coffee']
+        },
+        options: {
+          'no_trailing_whitespace': {
+            'level': 'error'
+          }
+        }
       }
     },
-    uglify: {
-      options: {
-        banner: '<%= banner %>'
-      },
-      dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
+    coffee: {
+      glob_to_multiple: {
+        expand: true,
+        cwd: 'app',
+        src: ['**/*.coffee'],
+        dest: 'tmp',
+        ext: '.js'
       }
     },
-    jshint: {
+    requirejs: {
       options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        globals: {}
+        optimize: "uglify2",
+        baseUrl: "tmp",
+        include: "main",
+        mainConfigFile: "tmp/config/requirejs.js",
+        name: "../bower_components/almond/almond",
+        out: "tmp/<%= pkg.name %>.js"
       },
-      gruntfile: {
-        src: 'Gruntfile.js'
+      development: {
+        options: {
+          optimize: 'none'
+        }
       },
-      lib_test: {
-        src: ['lib/**/*.js', 'test/**/*.js']
+      production: {
+        options: {
+          optimize: 'uglify2'
+        }
       }
     },
     qunit: {
@@ -65,17 +65,32 @@ module.exports = function(grunt) {
         files: '<%= jshint.lib_test.src %>',
         tasks: ['jshint:lib_test', 'qunit']
       }
+    },
+    concat: {
+      options: {
+        banner: '<%= banner %>',
+        stripBanners: true
+      },
+      dist: {
+        src: ['tmp/<%= pkg.name %>.js'],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      }
     }
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('work', ['coffeelint', 'coffee', 'requirejs:development',
+    'qunit', 'concat']);
+  grunt.registerTask('production', ['coffeelint', 'coffee', 'requirejs:production',
+    'qunit', 'concat']);
+  grunt.registerTask('default', ['work'])
 
 };
