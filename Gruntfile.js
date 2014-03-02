@@ -18,6 +18,21 @@ module.exports = function(grunt) {
           src: ['test/**/*.coffee']
         },
         options: {
+          'missing_fat_arrows': {
+            'level': 'warn'
+          },
+          'newlines_after_classes': {
+            'level': 'error'
+          },
+          'no_empty_param_list': {
+            'level': 'error'
+          },
+          'arrow_spacing': {
+            'level': 'error'
+          },
+          'line_endings': {
+            'level': 'error'
+          },
           'no_trailing_whitespace': {
             'level': 'error'
           }
@@ -25,6 +40,9 @@ module.exports = function(grunt) {
       }
     },
     coffee: {
+      options: {
+        bare: true
+      },
       glob_to_multiple: {
         expand: true,
         cwd: 'app',
@@ -33,46 +51,40 @@ module.exports = function(grunt) {
         ext: '.js'
       }
     },
-    requirejs: {
-      options: {
-        optimize: "uglify2",
-        baseUrl: "tmp",
-        include: "main",
-        mainConfigFile: "tmp/config/requirejs.js",
-        name: "../bower_components/almond/almond",
-        out: "tmp/<%= pkg.name %>.js"
-      },
-      development: {
-        options: {
-          optimize: 'none'
-        }
-      },
-      production: {
-        options: {
-          optimize: 'uglify2'
-        }
-      }
-    },
     qunit: {
-      files: ['test/**/*.html']
+      files: ['test/unit-test.html']
     },
     watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
-      },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'qunit']
+      coffee: {
+        files: ['app/**/*.coffee'],
+        tasks: ['coffee', 'concat:app', 'concat:test', 'qunit']
       }
     },
     concat: {
+      app: {
+        options: {
+          banner: '<%= banner %>',
+          stripBanners: true
+        },
+        src: ['bower_components/paper/dist/paper-core.js',
+          'tmp/utilityBelt.js', 'tmp/game.js', 'tmp/language.js',
+          'tmp/round.js', 'tmp/quiz.js', 'tmp/question.js',
+          'tmp/balloon.js', 'tmp/main.js'],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
+      },
+      test: {
+        files: {
+          'tmp/pop.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js'],
+          'tmp/compiled_tests.js': ['tmp/test/**/*.js'],
+        }
+      }
+    },
+    uglify: {
       options: {
-        banner: '<%= banner %>',
-        stripBanners: true
+        banner: '<%= banner %>'
       },
       dist: {
-        src: ['tmp/<%= pkg.name %>.js'],
+        src: '<%= concat.app.dest %>',
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
     }
@@ -80,17 +92,14 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   // Default task.
-  grunt.registerTask('work', ['coffeelint', 'coffee', 'requirejs:development',
-    'qunit', 'concat']);
-  grunt.registerTask('production', ['coffeelint', 'coffee', 'requirejs:production',
-    'qunit', 'concat']);
-  grunt.registerTask('default', ['work'])
+  grunt.registerTask('default', ['coffeelint', 'coffee', 'concat:app',
+    'concat:test', 'qunit', 'uglify'])
 
 };

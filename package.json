@@ -6,10 +6,12 @@
     "url": "http://github.com/timothythehuman/pop/issues",
     "email": "timothythehuman@gmail.com"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "http://github.com/timothythehuman/pop/blob/master/MIT-LICENSE"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/timothythehuman/pop/blob/master/MIT-LICENSE"
+    }
+  ],
   "author": {
     "name": "Timothy Baron",
     "email": "timothythehuman@gmail.com"
@@ -28,6 +30,7 @@
     "grunt-contrib-qunit": "~0.4.0",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-coffee": "~0.10.1",
-    "grunt-contrib-requirejs": "~0.4.1"
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-uglify": "^0.3.2"
   }
 }

@@ -16,8 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "almond": "~0.2.9",
-    "qunit": "~1.14.0",
-    "lodash": "~2.4.1"
+    "qunit": "~1.14.0"
   }
 }
