@@ -1,11 +1,11 @@
 Pop = Pop || {}
 
 Pop.Config =
-  canvasWidth: this.canvasWidth || 840
-  canvasHeight: this.canvasHeight || 600
+  canvasWidth: this.canvasWidth
+  canvasHeight: this.canvasHeight
   defaultBalloonCount: 10
   inflationRate: 10
-  deflationRate: 3
+  deflationRate: 7
 
 Pop.HitOptions =
   segments: true

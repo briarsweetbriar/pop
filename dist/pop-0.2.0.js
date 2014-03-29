@@ -11746,11 +11746,11 @@ var Pop;
 Pop = Pop || {};
 
 Pop.Config = {
-  canvasWidth: this.canvasWidth || 840,
-  canvasHeight: this.canvasHeight || 600,
+  canvasWidth: this.canvasWidth,
+  canvasHeight: this.canvasHeight,
   defaultBalloonCount: 10,
   inflationRate: 10,
-  deflationRate: 3
+  deflationRate: 7
 };
 
 Pop.HitOptions = {
@@ -11855,6 +11855,7 @@ Pop.Balloon = function(params) {
 Pop.Balloon.prototype.startQuiz = function() {
   var quiz;
   this.activate();
+  Pop.removeHint();
   Pop.Input.show();
   quiz = new Pop.Quiz({
     tense: this.tense,
@@ -12030,6 +12031,16 @@ Pop.drawBalloon = function(params) {
   return path;
 };
 
+Pop.drawHint = function(hint) {
+  Pop.Hint.content = hint;
+  return Pop.Hint.fillColor = "#BE7274";
+};
+
+Pop.removeHint = function() {
+  Pop.Hint.content = "`ú` = `'` + 'u'; `ü` = `:` + `u`; `ñ` = `~` + `n`";
+  return Pop.Hint.fillColor = '#777';
+};
+
 Pop.drawLowerBox = function() {
   var rectangle, rectanglePath;
   rectangle = new Rectangle(new Point(0, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 5)), new Point(Pop.Config.canvasWidth, Pop.Config.canvasHeight));
@@ -12039,8 +12050,14 @@ Pop.drawLowerBox = function() {
 };
 
 Pop.drawMainMenu = function(params) {
-  var game, mainMenuButtons, rectangle, startButton;
+  var game, instructions, mainMenuButtons, rectangle, startButton;
   game = params.game;
+  instructions = Pop.drawWord({
+    text: "POP",
+    xCoord: Pop.Config.canvasWidth / 2,
+    yCoord: Pop.Config.canvasHeight / 2.5,
+    fontSize: 5
+  });
   Pop.drawLowerBox();
   rectangle = new Rectangle(new Point(0 + (Pop.Config.canvasWidth / 20), Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 4) - (Pop.Config.canvasHeight / 10))), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 20), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
   startButton = new Path.Rectangle(rectangle);
@@ -12053,7 +12070,7 @@ Pop.drawMainMenu = function(params) {
     return this.fillColor = '#FD777A';
   };
   Pop.drawWord({
-    text: "Start",
+    text: "start",
     xCoord: Pop.Config.canvasWidth / 2,
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13)
   });
@@ -12072,7 +12089,7 @@ Pop.drawMainMenu = function(params) {
 };
 
 Pop.drawRound = function(params) {
-  var balloon, balloonDrawing, balloonTool, balloons, currentRound, game, hint, tense, text, xCoord, xRate, _i, _len, _ref;
+  var balloon, balloonDrawing, balloonTool, balloons, currentRound, game, question, tense, text, xCoord, xRate, _i, _len, _ref;
   game = params.game;
   currentRound = game.roundManager.currentRound;
   project.activeLayer.removeChildren();
@@ -12100,11 +12117,16 @@ Pop.drawRound = function(params) {
     text += " (" + currentRound.currentQuiz.tense + "): ";
     text += currentRound.currentQuiz.currentQuestion().conjugation;
   }
-  hint = Pop.drawWord({
+  question = Pop.drawWord({
     text: text,
     xCoord: Pop.Config.canvasWidth / 2,
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 8),
     fontSize: .8
+  });
+  Pop.Hint = Pop.drawWord({
+    xCoord: Pop.Config.canvasWidth / 2,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 65),
+    fontSize: .3
   });
   xRate = Pop.Config.canvasWidth / (game.currentLanguage().tenses.length);
   xCoord = xRate / 4;
@@ -12149,7 +12171,7 @@ Pop.drawRound = function(params) {
       text += " (" + currentRound.currentQuiz.tense + "): ";
       text += currentRound.currentQuiz.currentQuestion().conjugation;
     }
-    hint.content = text;
+    question.content = text;
     for (_k = 0, _len2 = balloons.length; _k < _len2; _k++) {
       balloon = balloons[_k];
       if (balloon) {
@@ -12278,11 +12300,18 @@ Pop.drawRoundMenu = function(params) {
   }
   colorContinueButton();
   Pop.drawWord({
-    text: "Continue",
+    text: "continue",
     xCoord: Pop.Config.canvasWidth / 2,
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13)
   });
   view.draw();
+  Pop.drawWord({
+    text: "select balloons to pop",
+    xCoord: Pop.Config.canvasWidth / 2,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 65),
+    fontSize: .3,
+    color: '#777'
+  });
   newRoundButtons = new Tool();
   newRoundButtons.onMouseDown = function(event) {
     var hitResult;
@@ -12325,7 +12354,7 @@ Pop.drawWord = function(params) {
     point: new Point(params.xCoord, params.yCoord),
     content: params.text,
     fontSize: (Pop.Config.canvasHeight / 15) * fontSize,
-    fillColor: '#424134',
+    fillColor: params.color || '#424134',
     justification: 'center'
   });
 };
@@ -12497,6 +12526,7 @@ Pop.Quiz.prototype.prepNextQuestion = function() {
 
 Pop.Quiz.prototype.submitAnswer = function(answer) {
   var currentQuestion;
+  Pop.removeHint();
   currentQuestion = this.currentQuestion();
   if (currentQuestion.checkAnswer(answer)) {
     Pop.sfxInflate.play();
@@ -12508,7 +12538,10 @@ Pop.Quiz.prototype.submitAnswer = function(answer) {
     this.wrongAnswers += 1;
     this.balloon.inflation -= Pop.Config.deflationRate;
     if (currentQuestion.attemptsRemaining > 0) {
-      return currentQuestion.attemptsRemaining -= 1;
+      currentQuestion.attemptsRemaining -= 1;
+      if (currentQuestion.attemptsRemaining === 0) {
+        return Pop.drawHint(currentQuestion.answer);
+      }
     } else {
       return this.prepNextQuestion();
     }
@@ -12519,7 +12552,10 @@ Pop.Quiz.prototype.close = function() {
   this.game.roundManager.currentRound.setCurrentInfinitive();
   this.game.roundManager.currentRound.currentQuiz = void 0;
   this.balloon.active = false;
-  if (!this.balloon.inflated) {
+  Pop.Input.clear();
+  if (this.balloon.inflated) {
+    return this.balloon.startQuiz();
+  } else {
     return this.game.roundManager.currentRound.selectLowestBalloon();
   }
 };

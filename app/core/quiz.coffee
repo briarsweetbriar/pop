@@ -38,6 +38,7 @@ Pop.Quiz.prototype.prepNextQuestion = ->
   @nextQuestion()
 
 Pop.Quiz.prototype.submitAnswer = (answer) ->
+  Pop.removeHint()
   currentQuestion = @currentQuestion()
   if currentQuestion.checkAnswer(answer)
     Pop.sfxInflate.play()
@@ -50,6 +51,8 @@ Pop.Quiz.prototype.submitAnswer = (answer) ->
     @balloon.inflation -= Pop.Config.deflationRate
     if currentQuestion.attemptsRemaining > 0
       currentQuestion.attemptsRemaining -= 1
+      if currentQuestion.attemptsRemaining == 0
+        Pop.drawHint(currentQuestion.answer)
     else
       @prepNextQuestion()
 
@@ -57,5 +60,8 @@ Pop.Quiz.prototype.close = ->
   @game.roundManager.currentRound.setCurrentInfinitive()
   @game.roundManager.currentRound.currentQuiz = undefined
   @balloon.active = false
-  unless @balloon.inflated
+  Pop.Input.clear()
+  if @balloon.inflated
+    @balloon.startQuiz() 
+  else
     @game.roundManager.currentRound.selectLowestBalloon()

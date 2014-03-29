@@ -1,5 +1,11 @@
 Pop.drawMainMenu = (params) ->
   game = params.game
+
+  instructions = Pop.drawWord
+    text: "POP"
+    xCoord: Pop.Config.canvasWidth / 2
+    yCoord: Pop.Config.canvasHeight / 2.5
+    fontSize: 5
   
   Pop.drawLowerBox()
 
@@ -16,7 +22,7 @@ Pop.drawMainMenu = (params) ->
   startButton.onMouseLeave = ->
     @fillColor = '#FD777A'
   Pop.drawWord
-    text: "Start"
+    text: "start"
     xCoord: (Pop.Config.canvasWidth / 2)
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13)
   view.draw()

@@ -14,6 +14,7 @@ Pop.Balloon = (params) ->
 
 Pop.Balloon.prototype.startQuiz = ->
   @activate()
+  Pop.removeHint()
   Pop.Input.show()
   quiz = new Pop.Quiz
     tense: @tense,

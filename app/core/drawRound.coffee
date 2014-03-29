@@ -22,11 +22,16 @@ Pop.drawRound = (params) ->
     text += " (" + currentRound.currentQuiz.tense + "): "
     text += currentRound.currentQuiz.currentQuestion().conjugation
 
-  hint = Pop.drawWord
+  question = Pop.drawWord
     text: text
     xCoord: Pop.Config.canvasWidth / 2
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 8 )
     fontSize: .8
+
+  Pop.Hint = Pop.drawWord
+    xCoord: Pop.Config.canvasWidth / 2
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 65 )
+    fontSize: .3
 
   xRate = Pop.Config.canvasWidth / (game.currentLanguage().tenses.length)
   xCoord = xRate/4
@@ -63,7 +68,7 @@ Pop.drawRound = (params) ->
       text += " (" + currentRound.currentQuiz.tense + "): "
       text += currentRound.currentQuiz.currentQuestion().conjugation
 
-    hint.content = text
+    question.content = text
 
     for balloon in balloons
       if balloon

@@ -4,5 +4,5 @@ Pop.drawWord = (params) ->
     point: new Point(params.xCoord, params.yCoord)
     content: params.text
     fontSize: (Pop.Config.canvasHeight / 15) * fontSize
-    fillColor: '#424134'
+    fillColor: params.color || '#424134'
     justification: 'center'

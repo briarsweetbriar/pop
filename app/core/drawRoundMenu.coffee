@@ -91,10 +91,17 @@ Pop.drawRoundMenu = (params) ->
 
   colorContinueButton()
   Pop.drawWord
-    text: "Continue"
+    text: "continue"
     xCoord: (Pop.Config.canvasWidth / 2)
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13)
   view.draw()
+
+  Pop.drawWord
+    text: "select balloons to pop"
+    xCoord: Pop.Config.canvasWidth / 2
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 65 )
+    fontSize: .3
+    color: '#777'
 
   newRoundButtons = new Tool()
   newRoundButtons.onMouseDown = (event) ->
