@@ -1,16 +1,18 @@
 module "Round Tests"
 
-test "rounds have a set of selected tenses", ->
-  round = game.startRound({ tenses: ["past", "present"] })
-  deepEqual(round.tenses, ["past", "present"], "returns the round's tenses")
+test "Round has properties", ->
+  roundTenses = ["Tense 1", "Tense 2"]
+  round = new Pop.Round({ tenses: roundTenses, game: new Pop.Game() })
+  deepEqual(round.tenses, roundTenses, "tenses")
+  ok(round.game instanceof Pop.Game, "game")
+  ok(round.scoreKeeper instanceof Pop.ScoreKeeper, "scoreKeeper")
 
-test "rounds have a currentQuiz", ->
-  round = game.startRound({ tenses: ["past", "present"] })
-  quiz = round.balloons[0].startQuiz()
-  deepEqual(round.currentQuiz, quiz, "returns the round's current quiz")
-
-test "rounds have an adjustable number of balloons", ->
-  round = game.startRound({ tenses: ["past", "present"], balloons: 20 })
-  deepEqual(round.balloons.length, 20, "adjustable balloon count")
-  round = game.startRound({ tenses: ["past", "present"] })
-  deepEqual(round.balloons.length, 30, "balloon count defaults to 30")
+test "Round has balloons", ->
+  game = new Pop.Game()
+  balloonCount = 42
+  manualRound = new Pop.Round({ tenses: ["Present"], balloons: balloonCount, game: game })
+  defaultRound = new Pop.Round({ tenses: ["Present"], game: game })
+  deepEqual(manualRound.balloons.length, balloonCount,
+    "whose amount can be specified")
+  deepEqual(defaultRound.balloons.length, Pop.Config.defaultBalloonCount,
+    "whose amount defaults to #{ Pop.Config.defaultBalloonCount }")

@@ -67,9 +67,7 @@ module.exports = function(grunt) {
           stripBanners: true
         },
         src: ['bower_components/paper/dist/paper-core.js',
-          'tmp/utilityBelt.js', 'tmp/game.js', 'tmp/language.js',
-          'tmp/round.js', 'tmp/quiz.js', 'tmp/question.js',
-          'tmp/balloon.js', 'tmp/main.js'],
+          'tmp/config/*.js', 'tmp/core/*.js', 'app/languages/*.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       },
       test: {

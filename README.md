@@ -5,6 +5,7 @@ POP is an HTML5 Canvas game that helps players master verb conjugation in variou
 Contributors
 ------------
 Timothy Baron
+[Background Image Artist](http://reusage.blogspot.com/2012/09/4-grungy-bright-colored-blue-watercolor.html)
 
 Acknowledgments
 ---------------
