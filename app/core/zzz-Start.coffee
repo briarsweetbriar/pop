@@ -1,5 +1,10 @@
 paper.install(window)
 
+Pop.backgroundMusic = new Audio("pop-assets/background-music.wav")
+Pop.sfxPop = new Audio("pop-assets/sfx-pop.wav")
+Pop.sfxInflate = new Audio("pop-assets/sfx-inflate.wav")
+Pop.sfxDeflate = new Audio("pop-assets/sfx-deflate.wav")
+
 window.onload = ->
 
   Pop.game = new Pop.Game()
@@ -21,7 +26,7 @@ window.onload = ->
   Pop.style.innerHTML += '.pop-hidden { display: none; }'
 
   Pop.style.innerHTML += '#pop-input { position: absolute; font-size: 98%;'
-  Pop.style.innerHTML += ' width: 33%; height: 5%; bottom: 4%; left: 33%;'
+  Pop.style.innerHTML += ' width: 33%; height: 5%; bottom: 5%; left: 33%;'
   Pop.style.innerHTML += ' border-radius: 0; padding-left: 1%;}'
   document.getElementsByTagName('head')[0].appendChild(Pop.style)
 
@@ -42,16 +47,35 @@ window.onload = ->
   Pop.input = document.createElement('input')
   Pop.input.id = "pop-input"
 
+  Pop.rentALanugageTeacher = document.createElement('img')
+  Pop.rentALanugageTeacher.src = "pop-assets/rentalanguageteacher.png"
+  Pop.rentALanugageTeacher.id = "rent-a-language-teacher-image"
+  Pop.rentALanugageTeacher.className = "pop-hidden"
+  Pop.rentALanugageTeacher.width = "600"
+  Pop.rentALanugageTeacher.height = "315"
+
+  Pop.timothyCommoner = document.createElement('img')
+  Pop.timothyCommoner.src = "pop-assets/timothycommoner.png"
+  Pop.timothyCommoner.id = "timothy-commoner-image"
+  Pop.timothyCommoner.className = "pop-hidden"
+  Pop.timothyCommoner.width = "315"
+  Pop.timothyCommoner.height = "315"
+
+  Pop.mascot = document.createElement('img')
+  Pop.mascot.src = "pop-assets/mascot.png"
+  Pop.mascot.id = "mascot-image"
+  Pop.mascot.className = "pop-hidden"
+  Pop.mascot.width = "343"
+  Pop.mascot.height = "100"
+
+  Pop.container.appendChild(Pop.rentALanugageTeacher)
+  Pop.container.appendChild(Pop.timothyCommoner)
+  Pop.container.appendChild(Pop.mascot)
   Pop.container.appendChild(Pop.canvas)
   Pop.container.appendChild(Pop.form)
   document.getElementById("pop-form").appendChild(Pop.input)
 
   paper.setup(Pop.canvas)
-
-  Pop.backgroundMusic = new Audio("pop-assets/background-music.wav")
-  Pop.sfxPop = new Audio("pop-assets/sfx-pop.wav")
-  Pop.sfxInflate = new Audio("pop-assets/sfx-inflate.wav")
-  Pop.sfxDeflate = new Audio("pop-assets/sfx-deflate.wav")
 
   if typeof Pop.backgroundMusic.loop == 'boolean'
     Pop.backgroundMusic.loop = true
@@ -61,6 +85,26 @@ window.onload = ->
       @play()
     , false)
 
-  Pop.backgroundMusic.play()
+  splash1 = new Raster('rent-a-language-teacher-image')
+  splash1.position = view.center
+  Pop.drawWord
+    text: "Produced by"
+    xCoord: Pop.Config.canvasWidth / 2
+    yCoord: (Pop.Config.canvasHeight / 2) - 180
+    fontSize: .8
 
-  Pop.drawMainMenu({ game: Pop.game })
+  setTimeout(->
+    project.activeLayer.removeChildren()
+    splash2 = new Raster('timothy-commoner-image')
+    splash2.position = view.center
+    Pop.drawWord
+      text: "Developed by"
+      xCoord: Pop.Config.canvasWidth / 2
+      yCoord: (Pop.Config.canvasHeight / 2) - 180
+      fontSize: .8
+    setTimeout(->
+      project.activeLayer.removeChildren()
+      Pop.backgroundMusic.play()
+      Pop.drawMainMenu({ game: Pop.game })
+    , Pop.Config.spashTimes)
+  , Pop.Config.spashTimes)

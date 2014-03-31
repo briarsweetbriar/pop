@@ -98,6 +98,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', ['coffeelint', 'coffee', 'concat:app',
-    'concat:test', 'qunit', 'uglify'])
+    'concat:test', 'uglify'])
 
 };
