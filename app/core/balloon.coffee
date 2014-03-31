@@ -14,6 +14,7 @@ Pop.Balloon = (params) ->
 
 Pop.Balloon.prototype.startQuiz = ->
   @activate()
+  Pop.removeHint()
   Pop.Input.show()
   quiz = new Pop.Quiz
     tense: @tense,
@@ -62,7 +63,7 @@ Pop.Balloon.prototype.drift = ->
   @yMomentum += (Math.random() - .5) / 5
   @xCoord += @xMomentum
   @yCoord += @yMomentum
-  @inflation -= Math.random() / 50
+  @inflation -= Math.random() * Pop.Config.speed
 
 Object.defineProperty Pop.Balloon.prototype, "inflation",
   get: ->

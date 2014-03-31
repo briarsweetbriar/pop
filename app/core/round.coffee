@@ -38,10 +38,7 @@ Pop.Round.prototype.handleCompletion = ->
     for tense in @tenses
       @game.scoreKeeper["#{tense.camelize()}Pops"] +=
         @scoreKeeper["#{tense.camelize()}Pops"]
-      @game.scoreKeeper["#{tense.camelize()}Drops"] +=
-        @scoreKeeper["#{tense.camelize()}Drops"]
       @game.scoreKeeper.pops += @scoreKeeper.pops
-      @game.scoreKeeper.drops += @scoreKeeper.drops
-      @game.scoreKeeper.points += @scoreKeeper.points
+    @game.scoreKeeper.rounds++
 
     Pop.drawRoundMenu({ game: @game })
