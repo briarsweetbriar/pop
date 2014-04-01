@@ -12389,7 +12389,7 @@ Pop = Pop || {};
 Pop.Config = {
   canvasWidth: this.canvasWidth,
   canvasHeight: this.canvasHeight,
-  spashTimes: 2500,
+  spashTimes: 25,
   defaultBalloonCount: 10,
   inflationRate: 10,
   deflationRate: 7,
@@ -12839,10 +12839,6 @@ Pop.drawRound = function(params) {
     fontSize: .45
   });
   slowButtonText.isSlowButton = true;
-  rectangle = new Rectangle(new Point(Pop.Config.canvasWidth / 18, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 5.5)), new Point((Pop.Config.canvasHeight / 15) * 4.5, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 35)));
-  instructionBox = new Path.Rectangle(rectangle);
-  instructionBox.fillColor = "#FFD177";
-  instructionBox.strokeColor = "#BFA573";
   rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70), Pop.Config.canvasHeight * .01), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15), Pop.Config.canvasHeight * .06));
   menuButton = new Path.Rectangle(rectangle);
   menuButton.fillColor = '#FD777A';
@@ -12868,32 +12864,43 @@ Pop.drawRound = function(params) {
     fontSize: .27
   });
   soundButtonText.isSoundButton = true;
+  rectangle = new Rectangle(new Point(Pop.Config.canvasWidth / 18, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 5.5)), new Point((Pop.Config.canvasHeight / 15) * 5.4, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 75)));
+  instructionBox = new Path.Rectangle(rectangle);
+  instructionBox.fillColor = "#FFD177";
+  instructionBox.strokeColor = "#BFA573";
+  Pop.drawWord({
+    text: "English keyboards:",
+    xCoord: Pop.Config.canvasWidth / 15,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 7),
+    fontSize: .35,
+    justification: "left"
+  });
   Pop.drawWord({
     text: "é = ' + e",
     xCoord: Pop.Config.canvasWidth / 15,
-    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 7),
-    fontSize: .45,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 9),
+    fontSize: .3,
     justification: "left"
   });
   Pop.drawWord({
     text: "ü = ; + u",
     xCoord: Pop.Config.canvasWidth / 15,
-    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 9),
-    fontSize: .45,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 12),
+    fontSize: .3,
     justification: "left"
   });
   Pop.drawWord({
     text: "ñ = ~ + n",
     xCoord: Pop.Config.canvasWidth / 15,
-    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13),
-    fontSize: .45,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 19),
+    fontSize: .3,
     justification: "left"
   });
   Pop.drawWord({
     text: "skip = ctrl",
     xCoord: Pop.Config.canvasWidth / 15,
-    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 24),
-    fontSize: .45,
+    yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 40),
+    fontSize: .3,
     justification: "left"
   });
   resetSpeedColors = function() {
