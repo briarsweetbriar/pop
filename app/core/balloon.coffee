@@ -40,7 +40,7 @@ Pop.Balloon.prototype.yCoordRange = ->
   [ideal - 7, ideal + 7]
 
 Pop.Balloon.prototype.pop = ->
-  Pop.sfxPop.play()
+  Pop.sfxPop.play() unless Pop.Config.muted
   @inflated = false
   @round.scoreKeeper.pops += 1
   @round.scoreKeeper["#{ @tense.camelize() }Pops"] += 1

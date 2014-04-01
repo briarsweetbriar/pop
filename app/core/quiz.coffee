@@ -51,12 +51,12 @@ Pop.Quiz.prototype.submitAnswer = (answer) ->
   Pop.removeHint()
   currentQuestion = @currentQuestion()
   if currentQuestion.checkAnswer(answer)
-    Pop.sfxInflate.play()
     @correctAnswers += 1
     @balloon.inflation += Pop.Config.inflationRate
+    Pop.sfxInflate.play() if @balloon.inflated && !Pop.Config.muted
     @prepNextQuestion()
   else
-    Pop.sfxDeflate.play()
+    Pop.sfxDeflate.play() if !Pop.Config.muted
     @wrongAnswers += 1
     @balloon.inflation -= Pop.Config.deflationRate
     if currentQuestion.attemptsRemaining > 0

@@ -12389,14 +12389,15 @@ Pop = Pop || {};
 Pop.Config = {
   canvasWidth: this.canvasWidth,
   canvasHeight: this.canvasHeight,
-  spashTimes: 1500,
+  spashTimes: 3,
   defaultBalloonCount: 10,
   inflationRate: 10,
   deflationRate: 7,
   speed: .01,
-  slowSpeed: .5,
+  slowSpeed: .005,
   mediumSpeed: .01,
-  fastSpeed: 2
+  fastSpeed: .015,
+  muted: false
 };
 
 Pop.HitOptions = {
@@ -12538,7 +12539,9 @@ Pop.Balloon.prototype.yCoordRange = function() {
 };
 
 Pop.Balloon.prototype.pop = function() {
-  Pop.sfxPop.play();
+  if (!Pop.Config.muted) {
+    Pop.sfxPop.play();
+  }
   this.inflated = false;
   this.round.scoreKeeper.pops += 1;
   this.round.scoreKeeper["" + (this.tense.camelize()) + "Pops"] += 1;
@@ -12722,7 +12725,7 @@ Pop.drawMainMenu = function(params) {
 };
 
 Pop.drawRound = function(params) {
-  var balloon, balloonDrawing, balloonTool, balloons, currentRound, fastButton, game, instructionBox, mediumButton, question, rectangle, slowButton, tense, text, xCoord, xRate, _i, _len, _ref;
+  var balloon, balloonDrawing, balloonTool, balloons, currentRound, fastButton, fastButtonText, game, instructionBox, mediumButton, mediumButtonText, menuButton, menuButtonText, question, rectangle, resetSpeedColors, slowButton, slowButtonText, soundButton, soundButtonText, tense, text, xCoord, xRate, _i, _len, _ref;
   game = params.game;
   currentRound = game.roundManager.currentRound;
   project.activeLayer.removeChildren();
@@ -12790,62 +12793,81 @@ Pop.drawRound = function(params) {
   });
   rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 10)), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 9.8), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
   fastButton = new Path.Rectangle(rectangle);
-  fastButton.fillColor = '#FD777A';
+  if (Pop.Config.speed === Pop.Config.fastSpeed) {
+    fastButton.fillColor = '#FE999B';
+  } else {
+    fastButton.fillColor = '#FD777A';
+  }
   fastButton.strokeColor = '#BE7274';
   fastButton.isFastButton = true;
-  fastButton.onMouseEnter = function() {
-    return this.fillColor = '#FE999B';
-  };
-  fastButton.onMouseLeave = function() {
-    return this.fillColor = '#FD777A';
-  };
-  fastButton = Pop.drawWord({
-    text: ">>",
+  fastButtonText = Pop.drawWord({
+    text: "fast",
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 14),
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15),
     fontSize: .45
   });
-  fastButton.isFastButton = true;
+  fastButtonText.isFastButton = true;
   rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 9), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 10)), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 5.8), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
   mediumButton = new Path.Rectangle(rectangle);
-  mediumButton.fillColor = '#FD777A';
+  if (Pop.Config.speed === Pop.Config.mediumSpeed) {
+    mediumButton.fillColor = '#FE999B';
+  } else {
+    mediumButton.fillColor = '#FD777A';
+  }
   mediumButton.strokeColor = '#BE7274';
   mediumButton.isMediumButton = true;
-  mediumButton.onMouseEnter = function() {
-    return this.fillColor = '#FE999B';
-  };
-  mediumButton.onMouseLeave = function() {
-    return this.fillColor = '#FD777A';
-  };
-  mediumButton = Pop.drawWord({
-    text: "reset",
+  mediumButtonText = Pop.drawWord({
+    text: "norm.",
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 7.1),
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15),
-    fontSize: .45
+    fontSize: .4
   });
-  mediumButton.isMediumButton = true;
+  mediumButtonText.isMediumButton = true;
   rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 5.5), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 10)), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 4), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
   slowButton = new Path.Rectangle(rectangle);
-  slowButton.fillColor = '#FD777A';
+  if (Pop.Config.speed === Pop.Config.slowSpeed) {
+    slowButton.fillColor = '#FE999B';
+  } else {
+    slowButton.fillColor = '#FD777A';
+  }
   slowButton.strokeColor = '#BE7274';
   slowButton.isSlowButton = true;
-  slowButton.onMouseEnter = function() {
-    return this.fillColor = '#FE999B';
-  };
-  slowButton.onMouseLeave = function() {
-    return this.fillColor = '#FD777A';
-  };
-  slowButton = Pop.drawWord({
-    text: "<<",
+  slowButtonText = Pop.drawWord({
+    text: "slow",
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 4.6),
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15),
     fontSize: .45
   });
-  slowButton.isSlowButton = true;
+  slowButtonText.isSlowButton = true;
   rectangle = new Rectangle(new Point(Pop.Config.canvasWidth / 18, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 5.5)), new Point((Pop.Config.canvasHeight / 15) * 4.5, Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 35)));
   instructionBox = new Path.Rectangle(rectangle);
   instructionBox.fillColor = "#FFD177";
   instructionBox.strokeColor = "#BFA573";
+  rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70), Pop.Config.canvasHeight * .01), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15), Pop.Config.canvasHeight * .06));
+  menuButton = new Path.Rectangle(rectangle);
+  menuButton.fillColor = '#FD777A';
+  menuButton.strokeColor = '#BE7274';
+  menuButton.isMenuButton = true;
+  menuButtonText = Pop.drawWord({
+    text: "Menu",
+    xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25),
+    yCoord: Pop.Config.canvasHeight * .0425,
+    fontSize: .3
+  });
+  menuButtonText.isMenuButton = true;
+  rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70), Pop.Config.canvasHeight * .07), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15), Pop.Config.canvasHeight * .12));
+  soundButton = new Path.Rectangle(rectangle);
+  soundButton.fillColor = '#FD777A';
+  soundButton.strokeColor = '#BE7274';
+  soundButton.isSoundButton = true;
+  text = Pop.Config.muted ? "Unmute" : "Mute";
+  soundButtonText = Pop.drawWord({
+    text: text,
+    xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25),
+    yCoord: Pop.Config.canvasHeight * .102,
+    fontSize: .27
+  });
+  soundButtonText.isSoundButton = true;
   Pop.drawWord({
     text: "é = ' + e",
     xCoord: Pop.Config.canvasWidth / 15,
@@ -12874,6 +12896,11 @@ Pop.drawRound = function(params) {
     fontSize: .45,
     justification: "left"
   });
+  resetSpeedColors = function() {
+    fastButton.fillColor = '#FD777A';
+    mediumButton.fillColor = '#FD777A';
+    return slowButton.fillColor = '#FD777A';
+  };
   balloonTool = new Tool();
   balloonTool.onMouseDown = function(event) {
     var hitResult;
@@ -12882,11 +12909,29 @@ Pop.drawRound = function(params) {
       if (hitResult.item.balloon) {
         hitResult.item.balloon.startQuiz();
       } else if (hitResult.item.isFastButton) {
-        Pop.Config.speed *= Pop.Config.fastSpeed;
+        Pop.Config.speed = Pop.Config.fastSpeed;
+        resetSpeedColors();
+        fastButton.fillColor = '#FE999B';
       } else if (hitResult.item.isMediumButton) {
         Pop.Config.speed = Pop.Config.mediumSpeed;
+        resetSpeedColors();
+        mediumButton.fillColor = '#FE999B';
       } else if (hitResult.item.isSlowButton) {
-        Pop.Config.speed *= Pop.Config.slowSpeed;
+        Pop.Config.speed = Pop.Config.slowSpeed;
+        resetSpeedColors();
+        slowButton.fillColor = '#FE999B';
+      } else if (hitResult.item.isMenuButton) {
+        currentRound.complete();
+      } else if (hitResult.item.isSoundButton) {
+        if (Pop.Config.muted) {
+          Pop.backgroundMusic.play();
+          Pop.Config.muted = false;
+          soundButtonText.content = "Mute";
+        } else {
+          Pop.backgroundMusic.pause();
+          Pop.Config.muted = true;
+          soundButtonText.content = "Unmute";
+        }
       }
     }
   };
@@ -12937,7 +12982,7 @@ Pop.drawRound = function(params) {
 };
 
 Pop.drawRoundMenu = function(params) {
-  var balloon, balloonDrawing, balloons, chosenTenses, colorContinueButton, continueButton, drawBalloons, game, instructionBox, instructionLink1, instructionLink2, mascot, newRoundButtons, rectangle, tense, tenseBalloons, text, xCoord, xRate, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+  var balloon, balloonDrawing, balloons, chosenTenses, colorContinueButton, continueButton, continueButtonText, drawBalloons, game, instructionBox, instructionLink1, instructionLink2, mascot, newRoundButtons, rectangle, soundButton, soundButtonText, tense, tenseBalloons, text, xCoord, xRate, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
   game = params.game;
   xRate = Pop.Config.canvasWidth / (game.currentLanguage().tenses.length);
   drawBalloons = function() {
@@ -12998,38 +13043,40 @@ Pop.drawRoundMenu = function(params) {
   });
   instructionLink1.isInstructionBox = true;
   instructionLink2 = Pop.drawWord({
-    text: "for help",
+    text: "for info",
     xCoord: (Pop.Config.canvasWidth / 2) + 208,
     yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 7.5)),
     fontSize: .3
   });
   instructionLink2.isInstructionBox = true;
   Pop.drawWord({
+    text: "" + (game.scoreKeeper.getPercent()) + "%",
+    xCoord: (Pop.Config.canvasWidth / 2) - 208,
+    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 5.5)),
+    fontSize: .3
+  });
+  Pop.drawWord({
     text: "" + game.scoreKeeper.pops + " pops",
     xCoord: (Pop.Config.canvasWidth / 2) - 208,
-    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 6)),
+    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 6.5)),
     fontSize: .3
   });
   Pop.drawWord({
     text: "in " + game.scoreKeeper.rounds + " rounds",
     xCoord: (Pop.Config.canvasWidth / 2) - 208,
-    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 7.5)),
+    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 8.1)),
     fontSize: .3
   });
+  Pop.drawWord({
+    text: "POP",
+    xCoord: Pop.Config.canvasWidth / 2,
+    yCoord: Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 2) + (Pop.Config.canvasHeight / 4.8)),
+    fontSize: 3
+  });
   Pop.drawLowerBox();
-  rectangle = new Rectangle(new Point(0 + (Pop.Config.canvasWidth / 20), Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 4) - (Pop.Config.canvasHeight / 10))), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 20), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
+  rectangle = new Rectangle(new Point(0 + (Pop.Config.canvasWidth / 10), Pop.Config.canvasHeight - ((Pop.Config.canvasHeight / 4) - (Pop.Config.canvasHeight / 10))), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 10), Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20)));
   continueButton = new Path.Rectangle(rectangle);
   continueButton.isContinueButton = true;
-  continueButton.onMouseEnter = function() {
-    if (chosenTenses.length > 0) {
-      return this.fillColor = '#FE999B';
-    }
-  };
-  continueButton.onMouseLeave = function() {
-    if (chosenTenses.length > 0) {
-      return this.fillColor = '#FD777A';
-    }
-  };
   xCoord = xRate / 2;
   _ref1 = game.currentLanguage().tenses;
   for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -13041,11 +13088,18 @@ Pop.drawRoundMenu = function(params) {
       inflation: 25,
       color: game.currentLanguage().colorForTense(tense)
     });
+    text = "" + (game.scoreKeeper.getPercent(tense)) + "%";
+    Pop.drawWord({
+      text: text,
+      xCoord: xCoord,
+      yCoord: Pop.Config.canvasHeight / 30,
+      fontSize: .3
+    });
     text = game.scoreKeeper["" + (tense.camelize()) + "Pops"];
     Pop.drawWord({
       text: text,
       xCoord: xCoord,
-      yCoord: Pop.Config.canvasHeight / 20,
+      yCoord: Pop.Config.canvasHeight / 15,
       fontSize: .3
     });
     xCoord += xRate;
@@ -13064,12 +13118,12 @@ Pop.drawRoundMenu = function(params) {
     xCoord += xRate;
   }
   colorContinueButton();
-  Pop.drawWord({
+  continueButtonText = Pop.drawWord({
     text: "continue",
     xCoord: Pop.Config.canvasWidth / 2,
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 13)
   });
-  view.draw();
+  continueButtonText.isContinueButton = true;
   Pop.drawWord({
     text: "select balloons to pop",
     xCoord: Pop.Config.canvasWidth / 2,
@@ -13077,6 +13131,20 @@ Pop.drawRoundMenu = function(params) {
     fontSize: .3,
     color: '#777'
   });
+  rectangle = new Rectangle(new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70), Pop.Config.canvasHeight * .90), new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15), Pop.Config.canvasHeight * .95));
+  soundButton = new Path.Rectangle(rectangle);
+  soundButton.fillColor = '#FD777A';
+  soundButton.strokeColor = '#BE7274';
+  soundButton.isSoundButton = true;
+  text = Pop.Config.muted ? "Unmute" : "Mute";
+  soundButtonText = Pop.drawWord({
+    text: text,
+    xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25),
+    yCoord: Pop.Config.canvasHeight * .932,
+    fontSize: .27
+  });
+  soundButtonText.isSoundButton = true;
+  view.draw();
   newRoundButtons = new Tool();
   newRoundButtons.onMouseDown = function(event) {
     var hitResult;
@@ -13091,7 +13159,7 @@ Pop.drawRoundMenu = function(params) {
         }
         colorContinueButton();
       } else if (hitResult.item.isInstructionBox) {
-        alert("Welcome to POP! Your goal is to pop as many balloons as possible. On this screen, select the tenses you want to practice. Once you're ready, click 'Continue'. You'll see a screen full of balloons, as well as a text field at the bottom. Each balloon represents a tense, and when you click on it, you'll be asked to conjugate a verb in its tense. Every correct answer inflates the balloon, while incorrect answers deflate it. If you fill the balloon with enough air, it'll pop, but if it loses too much air, it'll fall off the screen. All the while, your balloons are steadily losing air. You've got to answer fast or they'll all disappear!");
+        alert("Welcome to POP! Your goal is to pop as many balloons as possible. On this screen, select the tenses you want to practice. Once you're ready, click 'Continue'. You'll see a screen with 10 balloons. Each balloon represents a tense, and when you click it, you'll be asked to conjugate a verb in its tense. Every correct answer inflates the balloon, while incorrect answers deflate it. If you fill the balloon with enough air, it'll pop, but if it loses too much air, it'll fall off the screen. All the while, your balloons are steadily losing air. You've got to answer fast or they'll all disappear! Also note that if you're learning Latin American Spanish, you can simply skip 'vosotros' by pressing CTRL.");
       } else if (hitResult.item.isContinueButton) {
         if (chosenTenses.length > 0) {
           view.onFrame = null;
@@ -13099,6 +13167,16 @@ Pop.drawRoundMenu = function(params) {
             game: game,
             tenses: chosenTenses
           });
+        }
+      } else if (hitResult.item.isSoundButton) {
+        if (Pop.Config.muted) {
+          Pop.backgroundMusic.play();
+          Pop.Config.muted = false;
+          soundButtonText.content = "Mute";
+        } else {
+          Pop.backgroundMusic.pause();
+          Pop.Config.muted = true;
+          soundButtonText.content = "Unmute";
         }
       }
     }
@@ -13238,7 +13316,7 @@ Pop.Question = function(params) {
 };
 
 Pop.Question.prototype.checkAnswer = function(answer) {
-  if (answer === this.answer) {
+  if (answer.toLowerCase() === this.answer.toLowerCase()) {
     return true;
   }
   return false;
@@ -13311,12 +13389,16 @@ Pop.Quiz.prototype.submitAnswer = function(answer) {
   Pop.removeHint();
   currentQuestion = this.currentQuestion();
   if (currentQuestion.checkAnswer(answer)) {
-    Pop.sfxInflate.play();
     this.correctAnswers += 1;
     this.balloon.inflation += Pop.Config.inflationRate;
+    if (this.balloon.inflated && !Pop.Config.muted) {
+      Pop.sfxInflate.play();
+    }
     return this.prepNextQuestion();
   } else {
-    Pop.sfxDeflate.play();
+    if (!Pop.Config.muted) {
+      Pop.sfxDeflate.play();
+    }
     this.wrongAnswers += 1;
     this.balloon.inflation -= Pop.Config.deflationRate;
     if (currentQuestion.attemptsRemaining > 0) {
@@ -13398,21 +13480,27 @@ Pop.Round.prototype.selectLowestBalloon = function() {
 };
 
 Pop.Round.prototype.handleCompletion = function() {
-  var tense, _i, _len, _ref;
   if (this.balloons.length === 0) {
-    Pop.Input.clear();
-    Pop.Input.hide();
-    _ref = this.tenses;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      tense = _ref[_i];
-      this.game.scoreKeeper["" + (tense.camelize()) + "Pops"] += this.scoreKeeper["" + (tense.camelize()) + "Pops"];
-      this.game.scoreKeeper.pops += this.scoreKeeper.pops;
-    }
-    this.game.scoreKeeper.rounds++;
-    return Pop.drawRoundMenu({
-      game: this.game
-    });
+    return this.complete();
   }
+};
+
+Pop.Round.prototype.complete = function() {
+  var tense, _i, _len, _ref;
+  Pop.Input.clear();
+  Pop.Input.hide();
+  _ref = this.tenses;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    tense = _ref[_i];
+    this.game.scoreKeeper["" + (tense.camelize()) + "Pops"] += this.scoreKeeper["" + (tense.camelize()) + "Pops"];
+    this.game.scoreKeeper["" + (tense.camelize()) + "Drops"] += this.scoreKeeper["" + (tense.camelize()) + "Drops"];
+    this.game.scoreKeeper.pops += this.scoreKeeper.pops;
+    this.game.scoreKeeper.drops += this.scoreKeeper.drops;
+  }
+  this.game.scoreKeeper.rounds++;
+  return Pop.drawRoundMenu({
+    game: this.game
+  });
 };
 
 Pop.RoundManager = function(params) {
@@ -13443,6 +13531,25 @@ Pop.ScoreKeeper = function(tenses) {
     tense = tenses[_i];
     this["" + (tense.camelize()) + "Pops"] = 0;
     this["" + (tense.camelize()) + "Drops"] = 0;
+  }
+};
+
+Pop.ScoreKeeper.prototype.getPercent = function(tense) {
+  var drops, pops, total;
+  if (tense == null) {
+    tense = null;
+  }
+  if (tense === null) {
+    total = this.pops + this.drops;
+  } else {
+    pops = this["" + (tense.camelize()) + "Pops"];
+    drops = this["" + (tense.camelize()) + "Drops"];
+    total = pops + drops;
+  }
+  if (total === 0) {
+    return 0;
+  } else {
+    return (pops / total) * 100;
   }
 };
 
