@@ -12,6 +12,7 @@ Pop.ScoreKeeper = (tenses = []) ->
 
 Pop.ScoreKeeper.prototype.getPercent = (tense = null) ->
   if tense == null
+    pops = @pops
     total = @pops + @drops
   else
     pops = @["#{tense.camelize()}Pops"]
