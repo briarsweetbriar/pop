@@ -33,15 +33,18 @@ Pop.Round.prototype.selectLowestBalloon = ->
 
 Pop.Round.prototype.handleCompletion = ->
   if @balloons.length == 0
-    Pop.Input.clear()
-    Pop.Input.hide()
-    for tense in @tenses
-      @game.scoreKeeper["#{tense.camelize()}Pops"] +=
-        @scoreKeeper["#{tense.camelize()}Pops"]
-      @game.scoreKeeper["#{tense.camelize()}Drops"] +=
-        @scoreKeeper["#{tense.camelize()}Drops"]
-      @game.scoreKeeper.pops += @scoreKeeper.pops
-      @game.scoreKeeper.drops += @scoreKeeper.drops
-      @game.scoreKeeper.points += @scoreKeeper.points
+    @complete()
 
-    Pop.drawRoundMenu({ game: @game })
+Pop.Round.prototype.complete = ->
+  Pop.Input.clear()
+  Pop.Input.hide()
+  for tense in @tenses
+    @game.scoreKeeper["#{tense.camelize()}Pops"] +=
+      @scoreKeeper["#{tense.camelize()}Pops"]
+    @game.scoreKeeper["#{tense.camelize()}Drops"] +=
+      @scoreKeeper["#{tense.camelize()}Drops"]
+    @game.scoreKeeper.pops += @scoreKeeper.pops
+    @game.scoreKeeper.drops += @scoreKeeper.drops
+  @game.scoreKeeper.rounds++
+
+  Pop.drawRoundMenu({ game: @game })

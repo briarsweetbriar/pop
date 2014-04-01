@@ -40,7 +40,7 @@ Pop.Balloon.prototype.yCoordRange = ->
   [ideal - 7, ideal + 7]
 
 Pop.Balloon.prototype.pop = ->
-  Pop.sfxPop.play()
+  Pop.sfxPop.play() unless Pop.Config.muted
   @inflated = false
   @round.scoreKeeper.pops += 1
   @round.scoreKeeper["#{ @tense.camelize() }Pops"] += 1
@@ -63,7 +63,7 @@ Pop.Balloon.prototype.drift = ->
   @yMomentum += (Math.random() - .5) / 5
   @xCoord += @xMomentum
   @yCoord += @yMomentum
-  @inflation -= Math.random() / 50
+  @inflation -= Math.random() * Pop.Config.speed
 
 Object.defineProperty Pop.Balloon.prototype, "inflation",
   get: ->

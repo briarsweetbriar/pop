@@ -5,6 +5,8 @@ Pop.Quiz = (params) ->
   @infinitive = params.infinitive
   @verb = @game.currentLanguage().findVerbByInfinitive @infinitive
 
+  @answered = []
+
   @questions = []
 
   for key, value of @verb.tenses[@tense]
@@ -14,7 +16,7 @@ Pop.Quiz = (params) ->
   @wrongAnswers = 0
   @pendingAnswers = @questions.length
 
-  @currentQuestionLocation = 0
+  @currentQuestionLocation = Pop.getRandomInt(0, @questions.length - 1)
 
   return
 
@@ -22,15 +24,23 @@ Pop.Quiz.prototype.currentQuestion = ->
   @questions[@currentQuestionLocation]
 
 Pop.Quiz.prototype.firstQuestion = ->
-  @currentQuestionLocation = 0
+  @setNewLocation()
   @currentQuestion()
 
 Pop.Quiz.prototype.nextQuestion = ->
-  @currentQuestionLocation++
-  if @currentQuestionLocation < @questions.length
+  @answered.push(@currentQuestionLocation)
+  if @setNewLocation() >= 0
     @currentQuestion()
   else
     @close()
+
+Pop.Quiz.prototype.setNewLocation = ->
+  candidates = []
+  for question in @questions
+    unless @answered.indexOf(@questions.indexOf(question)) >= 0
+      candidates.push(question)
+  candidate = Pop.getRandomElement(candidates)
+  @currentQuestionLocation = @questions.indexOf(candidate)  
 
 Pop.Quiz.prototype.prepNextQuestion = ->
   Pop.Input.clear()
@@ -41,12 +51,12 @@ Pop.Quiz.prototype.submitAnswer = (answer) ->
   Pop.removeHint()
   currentQuestion = @currentQuestion()
   if currentQuestion.checkAnswer(answer)
-    Pop.sfxInflate.play()
     @correctAnswers += 1
     @balloon.inflation += Pop.Config.inflationRate
+    Pop.sfxInflate.play() if @balloon.inflated && !Pop.Config.muted
     @prepNextQuestion()
   else
-    Pop.sfxDeflate.play()
+    Pop.sfxDeflate.play() if !Pop.Config.muted
     @wrongAnswers += 1
     @balloon.inflation -= Pop.Config.deflationRate
     if currentQuestion.attemptsRemaining > 0

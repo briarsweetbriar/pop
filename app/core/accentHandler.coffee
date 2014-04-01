@@ -11,43 +11,40 @@ Pop.AccentHandler =
 
 document.addEventListener "keydown", (e) ->
   if document.getElementById("pop-input") == document.activeElement
-    if e.keyCode is 192
+    if e.keyCode is 17
+      Pop.game.roundManager.currentRound.currentQuiz.nextQuestion()
+
+document.addEventListener "keypress", (e) ->
+  if document.getElementById("pop-input") == document.activeElement
+    char = String.fromCharCode(e.charCode)
+    if char is "~" || char is "`"
       Pop.AccentHandler.tildeActivated = true
       Pop.AccentHandler.replaceLastCharWith ""
-    else if e.keyCode is 222
+    else if char is "'" || char is "\""
       Pop.AccentHandler.accentActivated = true
       Pop.AccentHandler.replaceLastCharWith ""
-    else if e.keyCode is 59
+    else if char is ":" || char is ";"
       Pop.AccentHandler.diaeresisActivated = true
       Pop.AccentHandler.replaceLastCharWith ""
     else if e.keyCode != 16
       if Pop.AccentHandler.accentActivated == true
         Pop.AccentHandler.accentActivated = false
-        if e.shiftKey
-          switch e.keyCode
-            when 65 then Pop.AccentHandler.replaceLastCharWith "Á"
-            when 69 then Pop.AccentHandler.replaceLastCharWith "É"
-            when 73 then Pop.AccentHandler.replaceLastCharWith "Í"
-            when 79 then Pop.AccentHandler.replaceLastCharWith "Ó"
-            when 85 then Pop.AccentHandler.replaceLastCharWith "Ú"
-        else
-          switch e.keyCode
-            when 65 then Pop.AccentHandler.replaceLastCharWith "á"
-            when 69 then Pop.AccentHandler.replaceLastCharWith "é"
-            when 73 then Pop.AccentHandler.replaceLastCharWith "í"
-            when 79 then Pop.AccentHandler.replaceLastCharWith "ó"
-            when 85 then Pop.AccentHandler.replaceLastCharWith "ú"
+        switch char
+          when "A" then Pop.AccentHandler.replaceLastCharWith "Á"
+          when "E" then Pop.AccentHandler.replaceLastCharWith "É"
+          when "I" then Pop.AccentHandler.replaceLastCharWith "Í"
+          when "O" then Pop.AccentHandler.replaceLastCharWith "Ó"
+          when "U" then Pop.AccentHandler.replaceLastCharWith "Ú"
+          when "a" then Pop.AccentHandler.replaceLastCharWith "á"
+          when "e" then Pop.AccentHandler.replaceLastCharWith "é"
+          when "i" then Pop.AccentHandler.replaceLastCharWith "í"
+          when "o" then Pop.AccentHandler.replaceLastCharWith "ó"
+          when "u" then Pop.AccentHandler.replaceLastCharWith "ú"
       else if Pop.AccentHandler.diaeresisActivated == true
         Pop.AccentHandler.diaeresisActivated = false
-        if e.keyCode == 85
-          if e.shiftKey
-            Pop.AccentHandler.replaceLastCharWith "Ü"
-          else
-            Pop.AccentHandler.replaceLastCharWith "ü"
+        if char == "U" then Pop.AccentHandler.replaceLastCharWith "Ü"
+        else if char == "u" then Pop.AccentHandler.replaceLastCharWith "ü"
       else if Pop.AccentHandler.tildeActivated == true
         Pop.AccentHandler.tildeActivated = false
-        if e.keyCode == 78
-          if e.shiftKey
-            Pop.AccentHandler.replaceLastCharWith "Ñ"
-          else
-            Pop.AccentHandler.replaceLastCharWith "ñ"
+        if char == "N" then Pop.AccentHandler.replaceLastCharWith "Ñ"
+        else if char == "n" then Pop.AccentHandler.replaceLastCharWith "ñ"
