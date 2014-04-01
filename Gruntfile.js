@@ -70,6 +70,15 @@ module.exports = function(grunt) {
           'tmp/config/*.js', 'tmp/core/*.js', 'app/languages/*.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       },
+      latest: {
+        options: {
+          banner: '<%= banner %>',
+          stripBanners: true
+        },
+        src: ['bower_components/paper/dist/paper-core.js',
+          'tmp/config/*.js', 'tmp/core/*.js', 'app/languages/*.js'],
+        dest: 'dist/<%= pkg.name %>-latest.js'
+      },
       test: {
         files: {
           'tmp/pop.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js'],
@@ -78,12 +87,19 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
-      options: {
-        banner: '<%= banner %>'
-      },
-      dist: {
+      version: {
+        options: {
+          banner: '<%= banner %>'
+        },
         src: '<%= concat.app.dest %>',
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      },
+      latest: {
+        options: {
+          banner: '<%= banner %>'
+        },
+        src: '<%= concat.app.dest %>',
+        dest: 'dist/<%= pkg.name %>-latest.min.js'
       }
     }
   });
@@ -98,6 +114,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', ['coffeelint', 'coffee', 'concat:app',
-    'concat:test', 'uglify'])
+    'concat:latest', 'concat:test', 'uglify:version', 'uglify:latest'])
 
 };

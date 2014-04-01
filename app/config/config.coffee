@@ -3,7 +3,7 @@ Pop = Pop || {}
 Pop.Config =
   canvasWidth: this.canvasWidth
   canvasHeight: this.canvasHeight
-  spashTimes: 3
+  spashTimes: 2500
   defaultBalloonCount: 10
   inflationRate: 10
   deflationRate: 7
