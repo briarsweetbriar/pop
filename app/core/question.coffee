@@ -7,5 +7,5 @@ Pop.Question = (params) ->
   return
 
 Pop.Question.prototype.checkAnswer = (answer) ->
-  return true if answer == @answer
+  return true if answer.toLowerCase() == @answer.toLowerCase()
   return false

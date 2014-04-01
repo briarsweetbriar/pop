@@ -63,20 +63,19 @@ Pop.drawRound = (params) ->
       Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20))
   )
   fastButton = new Path.Rectangle(rectangle)
-  fastButton.fillColor = '#FD777A'
+  if Pop.Config.speed == Pop.Config.fastSpeed
+    fastButton.fillColor = '#FE999B'
+  else
+    fastButton.fillColor = '#FD777A'
   fastButton.strokeColor = '#BE7274'
   fastButton.isFastButton = true
-  fastButton.onMouseEnter = ->
-    @fillColor = '#FE999B'
-  fastButton.onMouseLeave = ->
-    @fillColor = '#FD777A'
 
-  fastButton = Pop.drawWord
-    text: ">>"
+  fastButtonText = Pop.drawWord
+    text: "fast"
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 14)
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15)
     fontSize: .45
-  fastButton.isFastButton = true
+  fastButtonText.isFastButton = true
 
   rectangle = new Rectangle(
     new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 9),
@@ -85,20 +84,19 @@ Pop.drawRound = (params) ->
       Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20))
   )
   mediumButton = new Path.Rectangle(rectangle)
-  mediumButton.fillColor = '#FD777A'
+  if Pop.Config.speed == Pop.Config.mediumSpeed
+    mediumButton.fillColor = '#FE999B'
+  else
+    mediumButton.fillColor = '#FD777A'
   mediumButton.strokeColor = '#BE7274'
   mediumButton.isMediumButton = true
-  mediumButton.onMouseEnter = ->
-    @fillColor = '#FE999B'
-  mediumButton.onMouseLeave = ->
-    @fillColor = '#FD777A'
 
-  mediumButton = Pop.drawWord
-    text: "reset"
+  mediumButtonText = Pop.drawWord
+    text: "norm."
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 7.1)
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15)
-    fontSize: .45
-  mediumButton.isMediumButton = true
+    fontSize: .4
+  mediumButtonText.isMediumButton = true
 
   rectangle = new Rectangle(
     new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 5.5),
@@ -107,20 +105,19 @@ Pop.drawRound = (params) ->
       Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 20))
   )
   slowButton = new Path.Rectangle(rectangle)
-  slowButton.fillColor = '#FD777A'
+  if Pop.Config.speed == Pop.Config.slowSpeed
+    slowButton.fillColor = '#FE999B'
+  else
+    slowButton.fillColor = '#FD777A'
   slowButton.strokeColor = '#BE7274'
   slowButton.isSlowButton = true
-  slowButton.onMouseEnter = ->
-    @fillColor = '#FE999B'
-  slowButton.onMouseLeave = ->
-    @fillColor = '#FD777A'
 
-  slowButton = Pop.drawWord
-    text: "<<"
+  slowButtonText = Pop.drawWord
+    text: "slow"
     xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 4.6)
     yCoord: Pop.Config.canvasHeight - (Pop.Config.canvasHeight / 15)
     fontSize: .45
-  slowButton.isSlowButton = true
+  slowButtonText.isSlowButton = true
 
   rectangle = new Rectangle(
     new Point(Pop.Config.canvasWidth / 18,
@@ -131,6 +128,43 @@ Pop.drawRound = (params) ->
   instructionBox = new Path.Rectangle(rectangle)
   instructionBox.fillColor = "#FFD177"
   instructionBox.strokeColor = "#BFA573"
+
+  rectangle = new Rectangle(
+    new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70),
+      Pop.Config.canvasHeight * .01),
+    new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15),
+      Pop.Config.canvasHeight * .06)
+  )
+  menuButton = new Path.Rectangle(rectangle)
+  menuButton.fillColor = '#FD777A'
+  menuButton.strokeColor = '#BE7274'
+  menuButton.isMenuButton = true
+
+  menuButtonText = Pop.drawWord
+    text: "Menu"
+    xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25)
+    yCoord: Pop.Config.canvasHeight * .0425
+    fontSize: .3
+  menuButtonText.isMenuButton = true
+
+  rectangle = new Rectangle(
+    new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 70),
+      Pop.Config.canvasHeight * .07),
+    new Point(Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 15),
+      Pop.Config.canvasHeight * .12)
+  )
+  soundButton = new Path.Rectangle(rectangle)
+  soundButton.fillColor = '#FD777A'
+  soundButton.strokeColor = '#BE7274'
+  soundButton.isSoundButton = true
+
+  text = if Pop.Config.muted then "Unmute" else "Mute"
+  soundButtonText = Pop.drawWord
+    text: text
+    xCoord: Pop.Config.canvasWidth - (Pop.Config.canvasWidth / 25)
+    yCoord: Pop.Config.canvasHeight * .102
+    fontSize: .27
+  soundButtonText.isSoundButton = true
 
   Pop.drawWord
     text: "é = ' + e"
@@ -160,6 +194,11 @@ Pop.drawRound = (params) ->
     fontSize: .45
     justification: "left"
 
+  resetSpeedColors = ->
+    fastButton.fillColor = '#FD777A'
+    mediumButton.fillColor = '#FD777A'
+    slowButton.fillColor = '#FD777A'
+
   balloonTool = new Tool()
   balloonTool.onMouseDown = (event) ->
     hitResult = project.hitTest(event.point, Pop.HitOptions)
@@ -167,11 +206,28 @@ Pop.drawRound = (params) ->
       if hitResult.item.balloon
         hitResult.item.balloon.startQuiz()
       else if hitResult.item.isFastButton
-        Pop.Config.speed *= Pop.Config.fastSpeed
+        Pop.Config.speed = Pop.Config.fastSpeed
+        resetSpeedColors()
+        fastButton.fillColor = '#FE999B'
       else if hitResult.item.isMediumButton
         Pop.Config.speed = Pop.Config.mediumSpeed
+        resetSpeedColors()
+        mediumButton.fillColor = '#FE999B'
       else if hitResult.item.isSlowButton
-        Pop.Config.speed *= Pop.Config.slowSpeed
+        Pop.Config.speed = Pop.Config.slowSpeed
+        resetSpeedColors()
+        slowButton.fillColor = '#FE999B'
+      else if hitResult.item.isMenuButton
+        currentRound.complete()
+      else if hitResult.item.isSoundButton
+        if Pop.Config.muted
+          Pop.backgroundMusic.play()
+          Pop.Config.muted = false
+          soundButtonText.content = "Mute"
+        else
+          Pop.backgroundMusic.pause()
+          Pop.Config.muted = true
+          soundButtonText.content = "Unmute"
     return
 
   view.onFrame = (event) ->
