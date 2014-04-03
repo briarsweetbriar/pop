@@ -18,4 +18,4 @@ Pop.ScoreKeeper.prototype.getPercent = (tense = null) ->
     pops = @["#{tense.camelize()}Pops"]
     drops = @["#{tense.camelize()}Drops"]
     total = pops + drops
-  if total == 0 then 0 else (pops / total) * 100
+  if total == 0 then 0 else Math.round((pops / total) * 100)
