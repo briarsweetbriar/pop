@@ -1,4 +1,4 @@
-/*! pop - v0.5.2 - 2014-04-02
+/*! pop - v0.5.2 - 2014-04-03
 * http://github.com/timothythehuman/pop
 * Copyright (c) 2014 Timothy Baron; Licensed MIT */
 /*!
@@ -13557,7 +13557,7 @@ Pop.ScoreKeeper.prototype.getPercent = function(tense) {
   if (total === 0) {
     return 0;
   } else {
-    return (pops / total) * 100;
+    return Math.round((pops / total) * 100);
   }
 };
 
