@@ -2,7 +2,7 @@ Pop.ScoreKeeper = (tenses = []) ->
   @pops = 0
   @drops = 0
   @points = 0
-  @rounds = 0
+  @rounds = 1
 
   for tense in tenses
     @["#{tense.camelize()}Pops"] = 0
